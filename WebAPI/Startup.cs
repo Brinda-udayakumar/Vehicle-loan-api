@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace WebAPI
 {
@@ -44,6 +45,7 @@ namespace WebAPI
 
             .AddNewtonsoftJson(options => options.SerializerSettings.ContractResolver = new DefaultContractResolver());
 
+            services.AddDbContext<Models.AppDBContext>(item => item.UseSqlServer(Configuration.GetConnectionString("MyConStr")));
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {

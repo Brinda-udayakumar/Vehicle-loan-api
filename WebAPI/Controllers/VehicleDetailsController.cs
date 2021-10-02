@@ -44,5 +44,27 @@ namespace WebAPI.Controllers
 
         }
 
+        [HttpPost]
+        public JsonResult Post(VehicleDetails vehicle_det)
+        {
+            string query = @"insert into dbo.VehicleDetails values('" + vehicle_det.CarMake + @"','" + vehicle_det.CarModel + @"','" + vehicle_det.ExShowroomPrice + @"')";
+            DataTable table = new DataTable();
+            string sqlDataSource = _configuration.GetConnectionString("MyConStr");
+            SqlDataReader myReader;
+            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            {
+                myCon.Open();
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                {
+                    myReader = myCommand.ExecuteReader();
+                    table.Load(myReader);
+                    myReader.Close();
+                    myCon.Close();
+                }
+            }
+            return new JsonResult("Added Successfully");
+
+        }
+
     }
 }

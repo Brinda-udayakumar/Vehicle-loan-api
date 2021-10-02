@@ -43,6 +43,29 @@ namespace WebAPI.Controllers
             return new JsonResult(table);
 
         }
-        
+
+        [HttpPost]
+        public JsonResult Post(LoanDetails Loan_det)
+        {
+            
+            string query = @"insert into dbo.LoanDetails values('" + Loan_det.LoanAmount + @"','" + Loan_det.LoanTenure + @"','" + Loan_det.RateOfInterest + @"','" + Loan_det.LoanStatus + @"')";
+            DataTable table = new DataTable();
+            string sqlDataSource = _configuration.GetConnectionString("MyConStr");
+            SqlDataReader myReader;
+            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            {
+                myCon.Open();
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                {
+                    myReader = myCommand.ExecuteReader();
+                    table.Load(myReader);
+                    myReader.Close();
+                    myCon.Close();
+                }
+            }
+            return new JsonResult("Added Successfully");
+
+        }
+
     }
 }
