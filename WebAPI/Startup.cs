@@ -46,6 +46,8 @@ namespace WebAPI
             .AddNewtonsoftJson(options => options.SerializerSettings.ContractResolver = new DefaultContractResolver());
 
             services.AddDbContext<Models.AppDBContext>(item => item.UseSqlServer(Configuration.GetConnectionString("MyConStr")));
+           
+
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {

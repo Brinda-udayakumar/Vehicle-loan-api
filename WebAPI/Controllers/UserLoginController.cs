@@ -33,16 +33,17 @@ namespace WebAPI.Controllers
 
                 if (UserLogin != null)
                 {
-                    return UserLogin;
+                    
+                    return new JsonResult(UserLogin);
                 }
                 else
                 {
-                    return BadRequest("Invalid credentials");
+                    return new JsonResult("Invalid credentials");
                 }
             }
             else
             {
-                return BadRequest();
+                return new JsonResult("Not Working");
             }
         }
 
