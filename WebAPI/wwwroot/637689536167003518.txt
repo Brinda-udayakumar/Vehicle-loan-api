@@ -1,0 +1,199 @@
+ASSIGNMENT 2
+
+
+//Create a custom exception class “InvalidAmountException” class to throw an exception for negative amount.
+//Create another custom exception class “InsufficientFundException” class to throw an
+//exception for amount exceeding the current balance.
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.Serialization;
+using System.Text;
+using System.Threading.Tasks;
+//using IATM;
+
+namespace Oops
+{
+    abstract class Account
+    {
+        protected int accountNo { get; set; }
+        protected int accountBalance { get; set; }
+        protected string accountPassword { get; set; }
+        protected static string bankName = "BlahBlahBank";
+        public Account()
+        {
+            Console.WriteLine("Enter account num");
+            accountNo = int.Parse(Console.ReadLine());
+            Console.WriteLine("Enter account balance");
+            accountBalance = int.Parse(Console.ReadLine());
+            if (accountBalance<0)
+            {
+                throw new InvalidAmountException("Balance should be positive");
+            }
+            Console.WriteLine("Enter account password");
+            accountPassword = Console.ReadLine();
+        }
+        public Account(int accNo, int accBal, string accPswd)
+        {
+            accountNo = accNo;
+            accountBalance = accBal;
+            accountPassword = accPswd;
+        }
+        public void DisplayAccount()
+        {
+            Console.WriteLine($"\n\n\t\tWelcome to {bankName}\n\n\tYour account number: {accountNo}\n\tYour account balance: {accountBalance}\n\tYour account password: ISASECRET");
+
+        }
+
+        protected abstract void Withdraw(int amt);
+    }
+
+    [Serializable]
+    internal class InvalidAmountException : Exception
+    {
+        public InvalidAmountException()
+        {
+        }
+
+        public InvalidAmountException(string message) : base(message)
+        {
+        }
+
+        public InvalidAmountException(string message, Exception innerException) : base(message, innerException)
+        {
+        }
+
+        protected InvalidAmountException(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+        }
+    }
+
+    class SavingsAccount : Account
+    {
+        static int minimiumBalance =5000;
+        public void DisplayAccount()
+        {
+            base.DisplayAccount();
+            Console.WriteLine($"\tMin Required balance:{minimiumBalance}");
+
+        }
+        protected override void Withdraw(int amt)
+        {
+            if (accountBalance - amt < minimiumBalance)
+            {
+                throw new InsufficientFundException("You don't have sufficient funds");
+            }
+            accountBalance -= amt;
+            Console.WriteLine($"Available balance after withdrawal: {accountBalance}");
+        }
+    }
+
+    [Serializable]
+    internal class InsufficientFundException : Exception
+    {
+        public InsufficientFundException()
+        {
+        }
+
+        public InsufficientFundException(string message) : base(message)
+        {
+        }
+
+        public InsufficientFundException(string message, Exception innerException) : base(message, innerException)
+        {
+        }
+
+        protected InsufficientFundException(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+        }
+    }
+
+    class CurrentAccount : Account
+    {
+        static int overdraftLimitAmount = 1000000;
+        public void DisplayAccount()
+        {
+            base.DisplayAccount();
+            Console.WriteLine($"\tOverdraft Limit Amount: {overdraftLimitAmount}");
+        }
+        protected override void Withdraw(int amt)
+        {
+            if (accountBalance < amt)
+            {
+                Console.WriteLine("You don't have required balance");
+                return;
+            }
+            accountBalance -= amt;
+            Console.WriteLine($"Overdraft limit after withdrawal: {overdraftLimitAmount}");
+        }
+    }
+    class SbiAtm : Account, IATM
+    {
+        public void changePassword(int accountNumber, string oldPassword, string newPassword)
+        {
+            if(accountNo == accountNumber && accountPassword==oldPassword)
+            {
+                accountPassword = newPassword;
+            }
+        }
+
+        public void checkBalance()
+        {
+            DisplayAccount();
+        }
+
+        public void withdraw(int accountNumber, double amount)
+        {
+            if(accountNo == accountNumber)
+            {
+                accountBalance -= (int)amount;
+            }
+        }
+
+        protected override void Withdraw(int amt)
+        {
+            accountBalance -= amt;
+        }
+    }
+    class IciciAtm : Account, IATM
+    {
+        public void changePassword(int accountNumber, string oldPassword, string newPassword)
+        {
+            if (accountNo == accountNumber && accountPassword == oldPassword)
+            {
+                accountPassword = newPassword;
+            }
+        }
+
+        public void checkBalance()
+        {
+            DisplayAccount();
+        }
+
+        public void withdraw(int accountNumber, double amount)
+        {
+            if (accountNo == accountNumber)
+            {
+                accountBalance -= (int)amount;
+            }
+        }
+
+        protected override void Withdraw(int amt)
+        {
+            accountBalance -= amt;
+        }
+    }
+    class Assignment2_Part1
+    {
+        public static void Main()
+        {
+            Console.WriteLine(int.MaxValue);
+            Account account = new SavingsAccount();
+            account.DisplayAccount();
+            CurrentAccount currentAccount = new CurrentAccount();
+            currentAccount.DisplayAccount();
+        }
+
+    }
+}
